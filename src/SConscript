@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+
+import os
+
+Import('env')
+
+env['CC'] = 'clang'
+env['CFLAGS'] = Split('-std=c11 -g -fcolor-diagnostics')
+env['CPPPATH'] = '#/src/godot_headers'
+
+so = env.SharedLibrary('libgdpoolbytearrayext.so', ['gdns.c', 'gdarchive.c'])
+inst_so = env.Install('#addons/gdpoolbytearrayext', '#build/linux/libpoolbytearrayext.so')
+env.Depends(inst_so, so)
