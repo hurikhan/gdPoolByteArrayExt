@@ -37,14 +37,14 @@ function init_sub {
 		esac
 	fi
 
-	git submodule init
-	git submodule update
+	git submodule update --init --recursive
 }
 
 function init_api {
-	./$GODOT_BIN --gdnative-generate-json-api api.json
+	#./$GODOT_BIN --gdnative-generate-json-api api.json
 	cd src/godot-cpp
-	scons platform=linux generate_bindings=yes use_custom_api_file=yes custom_api_file=../../api.json
+	#scons platform=linux generate_bindings=yes use_custom_api_file=yes custom_api_file=../../api.json
+	scons platform=linux generate_bindings=yes bits=64
 	cd ../..
 }
 
