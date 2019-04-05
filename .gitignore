@@ -1,2 +1,4 @@
 api.json
-
+*.dblite
+*.swp
+*.os
