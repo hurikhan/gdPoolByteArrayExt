@@ -38,6 +38,9 @@ public:
 	void _init(); // our initializer called by Godot
 
 	void read(PoolByteArray p_pool);
+	PoolByteArray write();
+	size_t size();
+
 	uint8_t get_u8(size_t offset);
 	uint16_t get_u16(size_t offset);
 	uint32_t get_u32(size_t offset);
@@ -50,6 +53,8 @@ public:
 	float get_f64(size_t offset);
 
 	Vector3 get_vec_f32(size_t offset);
+	String get_string(size_t offset, size_t max);
+	PoolByteArray get_subarray(size_t offset, size_t size);
 };
 
 } // namespace godot

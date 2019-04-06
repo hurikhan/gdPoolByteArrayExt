@@ -3,6 +3,8 @@
 using namespace godot;
 void GDPoolByteArrayExt::_register_methods() {
 	register_method("read", &GDPoolByteArrayExt::read);
+	register_method("write", &GDPoolByteArrayExt::write);
+	register_method("size", &GDPoolByteArrayExt::size);
 	register_method("get_u8", &GDPoolByteArrayExt::get_u8);
 	register_method("get_u16", &GDPoolByteArrayExt::get_u16);
 	register_method("get_u32", &GDPoolByteArrayExt::get_u32);
@@ -12,6 +14,8 @@ void GDPoolByteArrayExt::_register_methods() {
 	register_method("get_f32", &GDPoolByteArrayExt::get_f32);
 	register_method("get_f64", &GDPoolByteArrayExt::get_f64);
 	register_method("get_vec_f32", &GDPoolByteArrayExt::get_vec_f32);
+	register_method("get_string", &GDPoolByteArrayExt::get_string);
+	register_method("get_subarray", &GDPoolByteArrayExt::get_subarray);
 }
 
 GDPoolByteArrayExt::GDPoolByteArrayExt() {
@@ -27,6 +31,14 @@ void GDPoolByteArrayExt::_init() {
 
 void GDPoolByteArrayExt::read(PoolByteArray p_pool) {
 	pool = p_pool;
+}
+
+size_t GDPoolByteArrayExt::size() {
+	return pool.size();
+}
+
+PoolByteArray GDPoolByteArrayExt::write() {
+	return pool;
 }
 
 uint8_t GDPoolByteArrayExt::get_u8(size_t offset) {
@@ -118,4 +130,45 @@ Vector3 GDPoolByteArrayExt::get_vec_f32(size_t offset) {
 	v.z = z;
 
 	return v;
+}
+
+String GDPoolByteArrayExt::get_string(size_t offset, size_t max) {
+
+	char *cstr = (char*) godot_alloc(max+1);	
+
+	for(size_t i=0; i < max; i++) {
+		cstr[i] = pool[offset+i];
+		if (pool[offset+i] == 0)
+			break;
+	}
+
+	if (cstr[max-2] != 0)
+		cstr[max-1] = 0;
+
+	String s = String(cstr);	
+
+	godot_free(cstr);
+
+	return s;
+}
+
+PoolByteArray GDPoolByteArrayExt::get_subarray(size_t offset, size_t size) {
+	PoolByteArray slice;
+
+	slice.resize(size);
+
+	const uint8_t* src;
+	const uint8_t* dest;
+	src = pool.read().ptr();
+	dest = slice.read().ptr();
+
+	memcpy((void*)dest, (void*)src, size);
+
+	//PoolByteArray::Read r = pool.read();
+	//PoolByteArray::Write w = slice.write();
+
+	//for(int i=0; i<size; i++)
+	//	w[i] = r[offset + i];	
+
+	return slice;
 }
